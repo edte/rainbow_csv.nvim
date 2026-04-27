@@ -1670,7 +1670,7 @@ end
 M.copy_file_content_to_buf = function(src_file_path, dst_buf_no)
 	vim.cmd.bdelete { bang = true }
 	vim.cmd.redraw { bang = true }
-	vim.cmd.echo '"executing..."'
+	-- vim.cmd.echo '"executing..."' -- patched: silence noisy status
 	vim.cmd.buffer(dst_buf_no)
 	M.clear_current_buf_content()
 	local lines = vim.fn.readfile(src_file_path)
@@ -1770,7 +1770,7 @@ local function converged_select(table_buf_number, rb_script_path, query_buf_nr)
 	local psv_dst_table_path = ''
 
 	vim.cmd.redraw { bang = true }
-	vim.cmd.echo '"executing..."'
+	-- vim.cmd.echo '"executing..."' -- patched: silence noisy status
 	local table_path_esc = py_source_escape(table_path)
 	local rb_script_path_esc = py_source_escape(rb_script_path)
 	local input_delim_escaped = py_source_escape(input_delim)
