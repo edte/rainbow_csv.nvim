@@ -460,6 +460,12 @@ M.ft_to_dialect = function(ft_val)
 	if named_syntax_map[ft_val] then
 		return named_syntax_map[ft_val]
 	end
+	-- Patched: handle compound filetypes like `tsv.kulala_ui` by falling back
+	-- to the primary filetype (part before the first '.').
+	local primary_ft = ft_val:match('^([^.]+)')
+	if primary_ft and primary_ft ~= ft_val and named_syntax_map[primary_ft] then
+		return named_syntax_map[primary_ft]
+	end
 	local ft_parts = lit_split(ft_val, '_')
 	if #ft_parts < 3 or ft_parts[1] ~= 'rcsv' then
 		return { '', 'monocolumn', '' }
@@ -1745,10 +1751,17 @@ local function converged_select(table_buf_number, rb_script_path, query_buf_nr)
 	local input_comment_prefix = input_dialect[3]
 
 	local table_path = vim.fn.expand('#' .. table_buf_number .. ':p')
-	if table_path == '' then
+	-- Patched: nofile buffers (e.g. kulala://ui) have a non-empty name but are
+	-- not actually on disk. Detect them via buftype and filereadable, and write
+	-- out to a temp file just like the empty-name case.
+	local buftype = vim.bo[table_buf_number].buftype
+	local is_real_file = table_path ~= '' and buftype == '' and vim.fn.filereadable(table_path) == 1
+	if not is_real_file then
 		local tmp_file_name = 'tmp_table_' .. vim.fn.strftime('%Y_%m_%d_%H_%M_%S') .. '.txt'
 		table_path = rb_storage_dir .. '/' .. tmp_file_name
-		vim.cmd.write(string.format('%q', table_path))
+		-- Write current buffer contents to the temp path (handles nofile buffers)
+		local lines = vim.api.nvim_buf_get_lines(table_buf_number, 0, -1, false)
+		vim.fn.writefile(lines, table_path)
 	end
 
 	local psv_query_status = 'Unknown error'

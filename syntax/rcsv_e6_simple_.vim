@@ -1,0 +1,10 @@
+syntax match column9 /.\{-}\(æ\|$\)/ nextgroup=column0
+syntax match column8 /.\{-}\(æ\|$\)/ nextgroup=column9
+syntax match column7 /.\{-}\(æ\|$\)/ nextgroup=column8
+syntax match column6 /.\{-}\(æ\|$\)/ nextgroup=column7
+syntax match column5 /.\{-}\(æ\|$\)/ nextgroup=column6
+syntax match column4 /.\{-}\(æ\|$\)/ nextgroup=column5
+syntax match column3 /.\{-}\(æ\|$\)/ nextgroup=column4
+syntax match column2 /.\{-}\(æ\|$\)/ nextgroup=column3
+syntax match column1 /.\{-}\(æ\|$\)/ nextgroup=column2
+syntax match column0 /.\{-}\(æ\|$\)/ nextgroup=column1

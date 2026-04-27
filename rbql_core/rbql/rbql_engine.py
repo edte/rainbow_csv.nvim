@@ -1261,7 +1261,7 @@ def separate_actions(statement_groups, rbql_expression):
     rbql_expression = rbql_expression.strip(' ')
     result = dict()
     # For now support no more than one query modifier per query
-    mobj = re.match('^(.*)  *[Ww][Ii][Tt][Hh] *\(([a-z]{4,20})\) *$', rbql_expression)
+    mobj = re.match(r'^(.*)  *[Ww][Ii][Tt][Hh] *\(([a-z]{4,20})\) *$', rbql_expression)
     if mobj is not None:
         rbql_expression = mobj.group(1)
         result[WITH] = mobj.group(2)
